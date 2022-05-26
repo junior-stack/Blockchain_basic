@@ -7,15 +7,15 @@ contract Lottery{
 
     address[] public managers;
     address public owner;
-    mapping(address => uint[]) public buyers;
-    mapping(uint => address) public ticketMapUser;
+    mapping(uint => address payable) public ticketMapUser;
     uint public price;
     uint public ticket_number;
     uint public ussage_fee;
     IERC20 token;
+    event TransferSent(address _from, address _destAddr, uint _amount);
 
-    constructor(address manager1, address manager2) {
-        token = IERC();
+    constructor(address manager1, address manager2, address moktoken) {
+        token = IERC20(moktoken);
         managers.push(manager1);
         managers.push(manager2);
         owner = msg.sender;
@@ -30,14 +30,13 @@ contract Lottery{
         uint256 quantity = amount * price;
         require(quantity <= erc20balance, "Only owners can withdraw funds");
         token.transfer(address(this), quantity);
-        emit TransferSent(msg.sender, quantity);
+        emit TransferSent(msg.sender, address(this), quantity);
 
         // 2. ticket_number++
         // 3. assign tickets to buyers
         uint i;
         for(i = 0; i < amount; i++){
-            buyers[msg.sender] = ticket_number;
-            ticketMapUser[ticket_number] = msg.sender;
+            ticketMapUser[ticket_number] = payable(msg.sender);
             ticket_number++;
         }
 
@@ -56,7 +55,7 @@ contract Lottery{
     }
 
     function random() private view returns (uint) {
-        return uint(keccak256(block.difficulty, now, players));
+        return uint(keccak256(abi.encodePacked(ticket_number)));
     }
 
     function pickWinner() public {
@@ -67,11 +66,11 @@ contract Lottery{
         // 2. use random to generate winner ticket number
         uint win = random() % ticket_number;
         // 3. Get the winner and send money to him
-        uint balance = token.balanceOf(this);
-        ticketMapUser[win].transfer( balance * 0.95);
+        uint balance = token.balanceOf(address(this));
+        ticketMapUser[win].transfer( balance * 95 / 100);
 
         // add the ussage fee
-        ussage_fee += balance * 0.05;
+        ussage_fee += balance * 5 / 100;
 
     }
 
