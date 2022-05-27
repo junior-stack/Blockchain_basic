@@ -13,6 +13,9 @@ contract Lottery{
     uint public price;
     uint public ticket_number;
     uint public ussage_fee;
+    bool public ongoing;
+    uint public start_time;
+    uint public num_sold;
     ERC20 token;
     event TransferSent(address _from, address _destAddr, uint _amount);
 
@@ -23,10 +26,12 @@ contract Lottery{
         owner = msg.sender;
         price = 20;
         ticket_number =0;
-
+        ongoing = true;
+        start_time = block.timestamp;
+        num_sold = 0;
     }
 
-    function buyTicket(address from, uint amount) public returns (uint){
+    function buyTicket(address from, uint amount) public onGoing returns (uint){
         // 1. transfer token from buyer to this contract account: transfer()
         uint256 erc20balance = token.balanceOf(from);
         uint256 quantity = amount * price;
@@ -47,10 +52,13 @@ contract Lottery{
             ticketMapUser[ticket_number] = payable(from);
             ticket_number++;
         }
+        num_sold += amount;
 
     }
 
     function withdraw() public {
+        // 0. The owner can only withdraw ussage fee when the lottery is ended
+        require(ongoing == false, "The owner can only withdraw ussage fee when the lottery is ended");
         // 1. use require to check whether the sender is owner
         require(msg.sender == owner, "Only owners can withdraw funds");
 
@@ -66,7 +74,8 @@ contract Lottery{
         return uint(keccak256(abi.encodePacked(ticket_number)));
     }
 
-    function pickWinner() public {
+    function pickWinner() public onGoing{
+        //0. check 5 min and whether the game is ongoing: add a field of start time
 
         // 1. use require to check whether the sender is owner or manager
         require(msg.sender == owner || msg.sender == managers[0] || msg.sender == managers[1], "You are not the owner or manager");
@@ -86,6 +95,8 @@ contract Lottery{
         // Reset the game
         price = 20;
         ticket_number = 0;
+        ongoing = false;
+        num_sold = 0;
 
     }
 
@@ -94,12 +105,18 @@ contract Lottery{
         require(msg.sender == owner, "Only the contract owner could reset the price");
 
         // 2. Check whether the lottery is ongoing
+        require(num_sold == 0, "There has already been some people buying the lottery, u cannot reset the price");
         
         // 3. reset the price
         price = newprice;
     }
 
-    function resetLottery() public {}
+    modifier onGoing(){
+        require(ongoing == true, "This action can only be performed when the lottery round is ongoing");
+        _;
+    }
+
+    //
 
 }
 

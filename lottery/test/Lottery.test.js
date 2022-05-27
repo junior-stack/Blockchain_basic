@@ -50,15 +50,20 @@ describe("Lottery contract", async () => {
       assert(Number(addr1_balance) == old_owner_balance);
 
       const amount = 500;
+      const ticket_price = await lottery.price();
       await lottery.buyTicket(addr1.address, amount);
       await lottery.pickWinner();
 
       addr1_balance = await token.balanceOf(addr1.address);
-      const contract_balance = await token.balanceOf(lottery.address);
-      const ticket_price = await lottery.price();
+      const final_ticket_price = await lottery.price();
+      const final_ticket_number = await lottery.ticket_number();
       const ussage_fee = await lottery.ussage_fee();
       assert(Number(addr1_balance) == amount * ticket_price * 0.95);
       assert(Number(ussage_fee) == amount * ticket_price * 0.05);
+
+      // test if reset the game
+      assert(final_ticket_price == 20);
+      assert(final_ticket_number == 0);
     });
   });
 
@@ -80,6 +85,33 @@ describe("Lottery contract", async () => {
       console.log("old owner balance: ", Number(old_owner_balance));
       assert(Number(owner_balance) == Number(old_owner_balance) * 0.05);
       assert(Number(contract_balance) == 0);
+    });
+  });
+
+  describe("Lottery Contract", () => {
+    it("successful reset price", async () => {
+      // successful reset
+      const Price = 30;
+      await lottery.resetPrice(Price);
+      const newPrice = await lottery.price();
+      assert(newPrice == Price);
+    });
+  });
+
+  describe("Lottery Contract", () => {
+    it("unsuccessful reset price", async () => {
+      // unsuccessful reset
+      try {
+        const Price = 30;
+        const amount = 4;
+        const price = await lottery.price();
+        await token.transfer(addr1.address, amount * price);
+        await lottery.buyTicket(addr1.address, amount);
+        await lottery.resetPrice(Price);
+        assert(false);
+      } catch (err) {
+        assert(err);
+      }
     });
   });
 });
