@@ -29,3 +29,12 @@ To deploy onto the Rinkby test net, use the following command:
 
 - Difference between transferFrom and transfer in ERC20
 - Difference between allowance and approve in ERC20
+
+# Note
+
+Address needs to record:
+
+- Lottery contract address
+- MokToken Contract address
+- Owner(deployer) address
+- two managers' addresses

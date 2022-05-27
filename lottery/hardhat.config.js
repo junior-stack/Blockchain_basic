@@ -29,4 +29,8 @@ module.exports = {
       accounts: [`0x${PRIVATE_KEY}`],
     },
   },
+  paths: {
+    cache: "./src/cache",
+    artifacts: "./src/artifacts",
+  },
 };

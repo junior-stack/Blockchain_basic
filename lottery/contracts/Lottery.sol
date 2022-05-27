@@ -13,10 +13,10 @@ contract Lottery{
     uint public price;
     uint public ticket_number;
     uint public ussage_fee;
-    bool public ongoing;
     uint public start_time;
     uint public num_sold;
     ERC20 token;
+    bool public ongoing;
     event TransferSent(address _from, address _destAddr, uint _amount);
 
     constructor(address manager1, address manager2, address moktoken) {

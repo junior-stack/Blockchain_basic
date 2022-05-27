@@ -1,11 +1,13 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
-  const balance = await deployer.getBalance();
-  const Token = await ethers.getContractFactory("Token");
-  const token = await Token.deploy();
-  console.log(`Token address ${token.address}`);
+  Lottery = await ethers.getContractFactory("Lottery");
+  [owner, addr1, addr2] = await ethers.getSigners();
+  Token = await ethers.getContractFactory("MokToken");
+  token = await Token.deploy();
+  lottery = await Lottery.deploy(addr1.address, addr2.address, token.address);
+  console.log(`token deployed at ${token.address}`);
+  console.log(`lottery deployed at ${lottery.address}`);
 }
 
 main()

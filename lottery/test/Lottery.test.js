@@ -1,4 +1,4 @@
-const { expect, assert } = require("chai");
+const { assert } = require("chai");
 const {
   isCallTrace,
 } = require("hardhat/internal/hardhat-network/stack-traces/message-trace");
