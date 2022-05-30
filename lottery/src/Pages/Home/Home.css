@@ -17,3 +17,14 @@
   flex-direction: column;
   min-width: 47%;
 }
+
+.loading {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+}
+
+.buyButton {
+  display: flex;
+  justify-content: center;
+}

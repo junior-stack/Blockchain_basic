@@ -6,14 +6,10 @@ import Context from "./Context/Context";
 import React, { useEffect } from "react";
 import lottery from "./artifacts/contracts/Lottery.sol/Lottery.json";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Home from "./Pages/Home";
-import Demo from "./Pages/Demo/Demo";
+import Home from "./Pages/Home/Home";
 import BuyTicket from "./Pages/BuyTicket/BuyTicket";
 
 function App() {
-  const { setContract, setProvider, setAddress } = React.useContext(Context);
-  const [price, setPrice] = React.useState(0);
-
   // useEffect(() => {
   //   const address = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
   //   const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -34,9 +30,8 @@ function App() {
 
   return (
     <Routes>
-      <Route path="*" element={<Navigate to="/demo" />} />
+      <Route path="*" element={<Navigate to="/home" />} />
       <Route path="/home" element={<Home />} />
-      <Route path="/demo" element={<Demo />} />
       <Route path="/buy" element={<BuyTicket />} />
 
       {/* About page for manager to select winner and withdraw */}
