@@ -28,6 +28,9 @@ module.exports = {
       url: INFURA_URL,
       accounts: [`0x${PRIVATE_KEY}`],
     },
+    hardhat: {
+      chainId: 1337,
+    },
   },
   paths: {
     cache: "./src/cache",
