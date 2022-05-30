@@ -1,17 +1,14 @@
 import React from "react";
 
 const Context = React.createContext({
-  address: "",
+  SignerContract: {},
+  setSignerContract: () => {},
+
+  ProviderContract: {},
+  setProviderContract: () => {},
+
+  Address: "",
   setAddress: () => {},
-
-  provider: {},
-  setProvider: () => {},
-
-  signer: {},
-  setSigner: () => {},
-
-  contract: {},
-  setContract: () => {},
 });
 
 export default Context;

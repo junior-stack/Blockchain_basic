@@ -1,10 +1,12 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "hardhat/console.sol";
 
 contract MokToken is ERC20 {
-  constructor() ERC20("MocktailSwap", "MOK"){
-    _mint(msg.sender, 10000);
+  constructor(address to) ERC20("MocktailSwap", "MOK"){
+    console.log("MokToken: ", msg.sender);
+    _mint(to, 10000);
   }
 
   function approve(address spender, uint256 amount) public virtual override returns (bool) {
