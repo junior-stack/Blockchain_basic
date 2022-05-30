@@ -1,0 +1,20 @@
+.QuantityField {
+  display: flex;
+  justify-content: center;
+}
+
+.label {
+  text-align: center;
+  flex-grow: 1;
+  align-items: center;
+}
+
+.select {
+  flex-grow: 1.5;
+}
+
+.price {
+  text-align: start;
+  flex-grow: 1.5;
+  align-items: center;
+}
