@@ -9,6 +9,15 @@ const Context = React.createContext({
 
   Address: "",
   setAddress: () => {},
+
+  Owner: "",
+  setOwner: () => {},
+
+  ManagerOne: "",
+  setManagerOne: () => {},
+
+  ManagerTwo: "",
+  setManagerTwo: () => {},
 });
 
 export default Context;

@@ -15,7 +15,13 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { useNavigate } from "react-router-dom";
 
 const Home = (props) => {
-  const { ProviderContract, setAddress } = useContext(Context);
+  const {
+    ProviderContract,
+    setAddress,
+    setManagerOne,
+    setManagerTwo,
+    setOwner,
+  } = useContext(Context);
 
   let navigate = useNavigate();
 
@@ -26,9 +32,15 @@ const Home = (props) => {
   useEffect(() => {
     const loadData = async () => {
       const price = await ProviderContract.price();
+      const managerOne = await ProviderContract.managers(0);
+      const managerTwo = await ProviderContract.managers(1);
+      const owner = await ProviderContract.owner();
       const provider = await detectEthereumProvider();
       setAddress(provider.selectedAddress);
       setPrice(Number(price));
+      setManagerOne(managerOne);
+      setManagerTwo(managerTwo);
+      setOwner(owner);
       setLoading(false);
     };
     loadData();
@@ -36,6 +48,10 @@ const Home = (props) => {
 
   const buy = async () => {
     navigate("/buy");
+  };
+
+  const toOrganizer = async () => {
+    navigate("/organizer");
   };
 
   return (
@@ -73,13 +89,19 @@ const Home = (props) => {
             </Typography>
           </Grid>
           <Grid item container xs={4} direction="row">
-            <Grid item xs={4}>
+            <Grid
+              item
+              xs={4}
+              onClick={toOrganizer}
+              className="about"
+              sx={{ textAlign: "center" }}
+            >
               About
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={4} sx={{ textAlign: "center" }}>
               Telegram
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={4} sx={{ textAlign: "center" }}>
               Etherscan
             </Grid>
           </Grid>

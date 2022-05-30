@@ -8,6 +8,7 @@ import lottery from "./artifacts/contracts/Lottery.sol/Lottery.json";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Pages/Home/Home";
 import BuyTicket from "./Pages/BuyTicket/BuyTicket";
+import OrganizerPage from "./Pages/OrganizerPage/OrganizerPage";
 
 function App() {
   // useEffect(() => {
@@ -33,6 +34,7 @@ function App() {
       <Route path="*" element={<Navigate to="/home" />} />
       <Route path="/home" element={<Home />} />
       <Route path="/buy" element={<BuyTicket />} />
+      <Route path="/organizer" element={<OrganizerPage />} />
 
       {/* About page for manager to select winner and withdraw */}
       {/* <Route path="/about" element={<About />} />

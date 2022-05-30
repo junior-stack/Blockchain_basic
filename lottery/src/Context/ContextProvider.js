@@ -44,6 +44,12 @@ const ContextProvider = ({ children }) => {
 
   const [Address, setAddress] = useState("");
 
+  const [ManagerOne, setManagerOne] = useState("");
+
+  const [ManagerTwo, setManagerTwo] = useState("");
+
+  const [Owner, setOwner] = useState("");
+
   // useEffect(() => {
   //   console.log("context contract: ", contract);
   // }, []);
@@ -57,6 +63,12 @@ const ContextProvider = ({ children }) => {
         setSignerContract,
         Address,
         setAddress,
+        ManagerOne,
+        setManagerOne,
+        ManagerTwo,
+        setManagerTwo,
+        Owner,
+        setOwner,
       }}
     >
       {children}
