@@ -1,5 +1,11 @@
 require("@nomiclabs/hardhat-waffle");
 
+const result = require("dotenv").config({ path: ".env" });
+
+if (result.error) {
+  throw result.error;
+}
+
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -13,13 +19,13 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
-const INFURA_URL = process.env.INFURA_URL;
+const INFURA_URL = result.parsed.REACT_APP_INFURA_URL;
 
-const PRIVATE_KEY_DEPLOYER = process.env.REACT_APP_PRIVATE_KEY_DEPLOYER;
+const PRIVATE_KEY_DEPLOYER = result.parsed.REACT_APP_PRIVATE_KEY_DEPLOYER;
 
-const PRIVATE_KEY_MANAGER_ONE = process.env.REACT_APP_PRIVATE_KEY_MANAGER_ONE;
+const PRIVATE_KEY_MANAGER_ONE = result.parsed.REACT_APP_PRIVATE_KEY_MANAGER_ONE;
 
-const PRIVATE_KEY_MANAGER_TWO = process.env.REACT_APP_PRIVATE_KEY_MANAGER_TWO;
+const PRIVATE_KEY_MANAGER_TWO = result.parsed.REACT_APP_PRIVATE_KEY_MANAGER_TWO;
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -38,10 +44,10 @@ module.exports = {
     },
     hardhat: {
       chainId: 1337,
-      from: process.env.REACT_APP_HARDHAT_ACCOUNT,
+      from: result.parsed.REACT_APP_HARDHAT_ACCOUNT,
     },
     localhost: {
-      from: process.env.REACT_APP_HARDHAT_ACCOUNT,
+      from: result.parsed.REACT_APP_HARDHAT_ACCOUNT,
     },
   },
   paths: {

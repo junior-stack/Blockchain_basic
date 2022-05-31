@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-// import "./MokToken.sol";
+
 
 
 contract Lottery{
@@ -27,7 +28,7 @@ contract Lottery{
         num_sold = 0;
     }
 
-    function buyTicket(address from, uint amount) public returns (uint){
+    function buyTicket(address from, uint amount) public{
         // 1. transfer token from buyer to this contract account: transfer()
         uint256 quantity = amount * price;
         token.approve(from, quantity);
