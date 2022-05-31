@@ -13,10 +13,13 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
-const INFURA_URL =
-  "https://rinkeby.infura.io/v3/ba7d3e260ba4438ca1c0bfe14fcc4851";
-const PRIVATE_KEY =
-  "d71eb3f06462e0ea5d3850e08fb19dec3144c6053a571939bf57b0c605b2ebef";
+const INFURA_URL = process.env.INFURA_URL;
+
+const PRIVATE_KEY_DEPLOYER = process.env.REACT_APP_PRIVATE_KEY_DEPLOYER;
+
+const PRIVATE_KEY_MANAGER_ONE = process.env.REACT_APP_PRIVATE_KEY_MANAGER_ONE;
+
+const PRIVATE_KEY_MANAGER_TWO = process.env.REACT_APP_PRIVATE_KEY_MANAGER_TWO;
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -27,14 +30,18 @@ module.exports = {
   networks: {
     rinkeby: {
       url: INFURA_URL,
-      accounts: [`0x${PRIVATE_KEY}`],
+      accounts: [
+        `0x${PRIVATE_KEY_DEPLOYER}`,
+        `0x${PRIVATE_KEY_MANAGER_ONE}`,
+        `0x${PRIVATE_KEY_MANAGER_TWO}`,
+      ],
     },
     hardhat: {
       chainId: 1337,
-      from: "0xcd3B766CCDd6AE721141F452C550Ca635964ce71",
+      from: process.env.REACT_APP_HARDHAT_ACCOUNT,
     },
     localhost: {
-      from: "0xcd3B766CCDd6AE721141F452C550Ca635964ce71",
+      from: process.env.REACT_APP_HARDHAT_ACCOUNT,
     },
   },
   paths: {

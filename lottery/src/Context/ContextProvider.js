@@ -1,35 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ethers } from "ethers";
 import Context from "./Context";
 import lottery from "./../artifacts/contracts/Lottery.sol/Lottery.json";
 import mokToken from "./../artifacts/contracts/MokToken.sol/MokToken.json";
 
 const ContextProvider = ({ children }) => {
-  // const [address, setAddress] = useState("");
+  const address = process.env.REACT_APP_ADDRESS;
 
-  // async function loadContract() {
-  //   if (typeof window.ethereum !== "undefined") {
-  //     const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //     console.log({ provider });
-  //     const contract = new ethers.Contract(address, lottery.abi, provider);
-  //     try {
-  //       const data = await contract.price();
-  //       console.log("data: ", data);
-  //     } catch (err) {
-  //       console.log("Error: ", err);
-  //     }
-  //   }
-  // }
-
-  // const [provider, setProvider] = useState(
-  //   new ethers.providers.Web3Provider(window.ethereum)
-  // );
-
-  // const [contract, setContract] = useState(
-  //   new ethers.Contract(address, lottery.abi, provider)
-  // );
-
-  const tokenAddress = "0xcD3bFD04F09D5d1230C7804A9358d6feDb3549A1";
+  const tokenAddress = process.env.REACT_APP_TOKENADDRESS;
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
 
