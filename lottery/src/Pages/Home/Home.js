@@ -23,6 +23,7 @@ const Home = (props) => {
     setManagerTwo,
     setOwner,
     setStartTime,
+    TokenProviderContract,
   } = useContext(Context);
 
   let navigate = useNavigate();
@@ -45,6 +46,10 @@ const Home = (props) => {
       const p = await ProviderContract.getBalance();
       const numSold = await ProviderContract.num_sold();
       const provider = await detectEthereumProvider();
+      const balances = await TokenProviderContract.balanceOf(
+        provider.selectedAddress
+      );
+      console.log("balances: ", balances);
       setPrize(Number(p));
       setAddress(provider.selectedAddress);
       setPrice(Number(price));

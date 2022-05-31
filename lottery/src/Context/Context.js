@@ -21,6 +21,9 @@ const Context = React.createContext({
 
   StartTime: {},
   setStartTime: () => {},
+
+  TokenProviderContract: {},
+  setTokenProviderContract: () => {},
 });
 
 export default Context;

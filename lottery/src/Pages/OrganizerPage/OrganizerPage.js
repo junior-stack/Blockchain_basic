@@ -19,7 +19,11 @@ const OrganizerPage = (props) => {
   };
   const pickWinner = async () => {
     setLoading(true);
-    await SignerContract.pickWinner();
+    try {
+      await SignerContract.pickWinner();
+    } catch (err) {
+      window.alert(err.message);
+    }
     setLoading(false);
   };
 

@@ -4,16 +4,26 @@ import { Button, Menu, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import "./BuyTicket.css";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Context from "../../Context/Context";
 const BuyTicket = (props) => {
-  const { SignerContract, Address } = useContext(Context);
+  const { SignerContract, Address, TokenProviderContract, ProviderContract } =
+    useContext(Context);
   const [amount, setAmount] = useState(0);
 
   const [loading, setLoading] = useState(false);
+
+  const [price, setPrice] = useState(0);
+
   const buy = async () => {
     setLoading(true);
     // await SignerContract.resetPrice(30);
+    const balances = await TokenProviderContract.balanceOf(Address);
+    if (balances < amount * price) {
+      window.alert("You do not have enough balance");
+      setLoading(false);
+      return;
+    }
     try {
       await SignerContract.buyTicket(Address, amount);
     } catch (err) {
@@ -25,6 +35,16 @@ const BuyTicket = (props) => {
   const change = (e) => {
     setAmount(e.target.value);
   };
+
+  useEffect(() => {
+    setLoading(true);
+    const loadPrice = async () => {
+      const p = await ProviderContract.price();
+      setPrice(Number(p));
+    };
+    loadPrice();
+    setLoading(false);
+  }, []);
 
   return (
     <LayOut title="Buy Ticket" loading={loading}>
@@ -42,7 +62,7 @@ const BuyTicket = (props) => {
               Ticket Price
             </Typography>
             <Typography variant="h2" align="center">
-              250 $ ROT
+              {price} $ ERC
             </Typography>
           </Stack>
           <div className="QuantityField">

@@ -29,7 +29,6 @@ contract Lottery{
 
     function buyTicket(address from, uint amount) public returns (uint){
         // 1. transfer token from buyer to this contract account: transfer()
-        uint256 erc20balance = token.balanceOf(from);
         uint256 quantity = amount * price;
         token.approve(from, quantity);
         token.transferFrom(from, address(this), quantity);

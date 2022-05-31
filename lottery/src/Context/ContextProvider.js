@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import Context from "./Context";
 import lottery from "./../artifacts/contracts/Lottery.sol/Lottery.json";
+import mokToken from "./../artifacts/contracts/MokToken.sol/MokToken.json";
 
 const ContextProvider = ({ children }) => {
   // const [address, setAddress] = useState("");
@@ -28,7 +29,7 @@ const ContextProvider = ({ children }) => {
   //   new ethers.Contract(address, lottery.abi, provider)
   // );
 
-  const address = "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853";
+  const tokenAddress = "0xcD3bFD04F09D5d1230C7804A9358d6feDb3549A1";
 
   const provider = new ethers.providers.Web3Provider(window.ethereum);
 
@@ -52,6 +53,10 @@ const ContextProvider = ({ children }) => {
 
   const [StartTime, setStartTime] = useState(Date.now());
 
+  const [TokenProviderContract, setTokenProviderContract] = useState(
+    new ethers.Contract(tokenAddress, mokToken.abi, provider)
+  );
+
   // useEffect(() => {
   //   console.log("context contract: ", contract);
   // }, []);
@@ -73,6 +78,8 @@ const ContextProvider = ({ children }) => {
         setOwner,
         StartTime,
         setStartTime,
+        TokenProviderContract,
+        setTokenProviderContract,
       }}
     >
       {children}
