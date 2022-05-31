@@ -18,6 +18,9 @@ const Context = React.createContext({
 
   ManagerTwo: "",
   setManagerTwo: () => {},
+
+  StartTime: {},
+  setStartTime: () => {},
 });
 
 export default Context;

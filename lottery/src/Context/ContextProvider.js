@@ -50,6 +50,8 @@ const ContextProvider = ({ children }) => {
 
   const [Owner, setOwner] = useState("");
 
+  const [StartTime, setStartTime] = useState(Date.now());
+
   // useEffect(() => {
   //   console.log("context contract: ", contract);
   // }, []);
@@ -69,6 +71,8 @@ const ContextProvider = ({ children }) => {
         setManagerTwo,
         Owner,
         setOwner,
+        StartTime,
+        setStartTime,
       }}
     >
       {children}

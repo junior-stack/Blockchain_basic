@@ -4,6 +4,7 @@
   margin-right: auto;
   display: flex;
   flex-direction: row;
+  margin-top: 100px;
 }
 
 .col1 {

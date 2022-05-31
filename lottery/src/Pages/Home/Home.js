@@ -17,15 +17,19 @@ import { useNavigate } from "react-router-dom";
 const Home = (props) => {
   const {
     ProviderContract,
+    StartTime,
     setAddress,
     setManagerOne,
     setManagerTwo,
     setOwner,
+    setStartTime,
   } = useContext(Context);
 
   let navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
+
+  const [prize, setPrize] = useState(0);
 
   const [price, setPrice] = useState(0);
 
@@ -35,14 +39,23 @@ const Home = (props) => {
       const managerOne = await ProviderContract.managers(0);
       const managerTwo = await ProviderContract.managers(1);
       const owner = await ProviderContract.owner();
+      const start_time = await ProviderContract.start_time();
+      const p = await ProviderContract.getBalance();
       const provider = await detectEthereumProvider();
+      setPrize(Number(p) * 0.95);
       setAddress(provider.selectedAddress);
       setPrice(Number(price));
       setManagerOne(managerOne);
       setManagerTwo(managerTwo);
       setOwner(owner);
+      setStartTime(new Date(start_time));
       setLoading(false);
+      window.ethereum.on("accountsChanged", function (accounts) {
+        // Time to reload your interface with accounts[0]!
+        setAddress(accounts[0]);
+      });
     };
+
     loadData();
   }, []);
 
@@ -107,44 +120,50 @@ const Home = (props) => {
           </Grid>
           <Grid item xs={4}>
             <Stack direction="row" spacing={3}>
-              <Button variant="contained">My Tickets</Button>
-              <Button variant="contained">Wallet</Button>
+              <Button variant="contained" sx={{ bgcolor: "#83ae58" }}>
+                My Tickets
+              </Button>
+              <Button variant="contained" sx={{ bgcolor: "#83ae58" }}>
+                Wallet
+              </Button>
             </Stack>
           </Grid>
         </Grid>
-        <Grid item container>
+        <Grid item container sx={{ width: "100%" }}>
           <div className="Container">
             <div className="col1">
-              <WebCard title="Current JackPot">
-                <Typography
-                  textAlign="center"
-                  sx={{ color: "white" }}
-                  variant="h2"
-                >
-                  1,000,000 $ROT
-                </Typography>
-              </WebCard>
-              <WebCard title="Current JackPot">
-                <Typography
-                  textAlign="center"
-                  sx={{ color: "white" }}
-                  variant="h2"
-                >
-                  1,000,000 $ROT
-                </Typography>
-              </WebCard>
-              <WebCard title="Current JackPot">
-                <Typography
-                  textAlign="center"
-                  sx={{ color: "white" }}
-                  variant="h2"
-                >
-                  1,000,000 $ROT
-                </Typography>
-              </WebCard>
+              <Stack spacing={4}>
+                <WebCard title="Current JackPot" sx={{ marginTop: "10px" }}>
+                  <Typography
+                    textAlign="center"
+                    sx={{ color: "white" }}
+                    variant="h2"
+                  >
+                    {prize} $ROT
+                  </Typography>
+                </WebCard>
+                <WebCard title="winning prize">
+                  <Typography
+                    textAlign="center"
+                    sx={{ color: "white" }}
+                    variant="h2"
+                  >
+                    {prize} $ROT
+                  </Typography>
+                </WebCard>
+                <WebCard title="winning ticket">
+                  <Typography
+                    textAlign="center"
+                    sx={{ color: "white" }}
+                    variant="h2"
+                  >
+                    1,000,000 $ROT
+                  </Typography>
+                </WebCard>
+              </Stack>
             </div>
             <div className="col2">
-              <WebCard title="Current JackPot">
+              <WebCard title="Ticket price">
                 <Stack spacing={0}>
                   <Typography
                     textAlign="center"
@@ -157,7 +176,7 @@ const Home = (props) => {
                     <div className="buyButton">
                       <Button
                         variant="contained"
-                        sx={{ width: 257, height: 70 }}
+                        sx={{ width: 257, height: 70, bgcolor: "#83ae58" }}
                         onClick={buy}
                       >
                         Buy
@@ -166,21 +185,21 @@ const Home = (props) => {
                   </Container>
                 </Stack>
               </WebCard>
-              <WebCard title="Current JackPot">
+              <WebCard title="Start Time">
                 <Stack spacing={0}>
                   <Typography
                     textAlign="center"
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    Mon, 26 Oct 2022
+                    {StartTime.toString()}
                   </Typography>
                   <Typography
                     textAlign="center"
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    00: 17: 11 GMT
+                    -
                   </Typography>
                 </Stack>
               </WebCard>
