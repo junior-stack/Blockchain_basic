@@ -14,8 +14,11 @@ const BuyTicket = (props) => {
   const buy = async () => {
     setLoading(true);
     // await SignerContract.resetPrice(30);
-    await SignerContract.buyTicket(Address, amount);
-    console.log("new price: ");
+    try {
+      await SignerContract.buyTicket(Address, amount);
+    } catch (err) {
+      window.alert(err.message);
+    }
     setLoading(false);
   };
 
