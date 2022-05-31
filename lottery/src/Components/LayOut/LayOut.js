@@ -22,7 +22,7 @@ const LayOut = (props) => {
           opacity: props.loading ? 0.15 : 1,
         }}
       >
-        <AppBar position="static" sx={{ height: "110px" }}>
+        <AppBar position="static" sx={{ height: "110px", bgcolor: "#83ae58" }}>
           <Toolbar
             sx={{
               displayPrint: "flex",

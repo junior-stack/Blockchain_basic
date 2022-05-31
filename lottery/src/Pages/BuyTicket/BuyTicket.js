@@ -61,7 +61,7 @@ const BuyTicket = (props) => {
           <div className="QuantityField">
             <Button
               variant="contained"
-              sx={{ height: "70px", width: "280px" }}
+              sx={{ height: "70px", width: "280px", bgcolor: "#83ae58" }}
               onClick={buy}
             >
               Buy

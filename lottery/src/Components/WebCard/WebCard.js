@@ -11,7 +11,7 @@ import "./WebCard.css";
 const WebCard = (props) => {
   return (
     <Box sx={{ alignItems: "center", height: "100%" }} className="wrapper">
-      <Card sx={{ bgcolor: "#222c1f" }}>
+      <Card sx={{ bgcolor: "#222c1f", width: "700px" }}>
         {/* <CardHeader subheader={<div className="Title">{props.title}</div>} /> */}
         <CardHeader
           subheader={
