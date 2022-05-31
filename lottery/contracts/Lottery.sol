@@ -1,7 +1,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "hardhat/console.sol";
 // import "./MokToken.sol";
 
 
@@ -22,7 +21,6 @@ contract Lottery{
         managers.push(manager1);
         managers.push(manager2);
         owner = msg.sender;
-        console.log("Lottery msg sender: ", msg.sender);
         price = 20;
         ticket_number =0;
         start_time = block.timestamp;
@@ -33,12 +31,6 @@ contract Lottery{
         // 1. transfer token from buyer to this contract account: transfer()
         uint256 erc20balance = token.balanceOf(from);
         uint256 quantity = amount * price;
-        console.log("buy ticket: ", quantity);
-        console.log("erc balance: ", erc20balance);
-        console.log("address this: ", address(this));
-        console.log("message sender: ", msg.sender);
-        console.log("from: ", from);
-        require(erc20balance >= quantity, "your balance cannot afford this amount of lottery");
         token.approve(from, quantity);
         token.transferFrom(from, address(this), quantity);
         emit TransferSent(from, address(this), quantity);
@@ -67,9 +59,6 @@ contract Lottery{
         // 3. Get the winner and send money to him
         uint balance = token.balanceOf(address(this));
         uint lottery_pool = balance * 95 / 100;  // the owner may not withdraw the accmulative ussage fee of previous lotteries
-        console.log("win: ", win);
-        console.log("winner: ", ticketMapUser[win]);
-        console.log("balance: ", balance);
         token.transfer(ticketMapUser[win], lottery_pool);
         token.transfer(address(owner), balance - lottery_pool);
         // add the ussage fee
@@ -84,8 +73,6 @@ contract Lottery{
     }
 
     function resetPrice(uint newprice) public {
-        // 1. use require to check whether the sender is owner
-        require(msg.sender == owner, "Only the contract owner could reset the price");
 
         // 2. Check whether the lottery is ongoing
         require(num_sold == 0, "There has already been some people buying the lottery, u cannot reset the price");
