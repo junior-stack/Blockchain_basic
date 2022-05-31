@@ -23,6 +23,7 @@ const PRIVATE_KEY =
  */
 module.exports = {
   solidity: "0.8.4",
+  defaultNetwork: "hardhat",
   networks: {
     rinkeby: {
       url: INFURA_URL,
@@ -30,6 +31,10 @@ module.exports = {
     },
     hardhat: {
       chainId: 1337,
+      from: "0xcd3B766CCDd6AE721141F452C550Ca635964ce71",
+    },
+    localhost: {
+      from: "0xcd3B766CCDd6AE721141F452C550Ca635964ce71",
     },
   },
   paths: {
