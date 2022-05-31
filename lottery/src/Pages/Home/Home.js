@@ -1,16 +1,14 @@
 import WebCard from "../../Components/WebCard/WebCard";
-import { getTableBodyUtilityClass, Typography } from "@mui/material";
+import { Typography, Grid } from "@mui/material";
 import { Container } from "@mui/system";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import "./Home.css";
 import { useContext, useEffect, useState } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from "@mui/icons-material/Send";
 import Context from "../../Context/Context";
-import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { useNavigate } from "react-router-dom";
 
@@ -23,7 +21,6 @@ const Home = (props) => {
     setManagerTwo,
     setOwner,
     setStartTime,
-    TokenProviderContract,
   } = useContext(Context);
 
   let navigate = useNavigate();
@@ -38,6 +35,7 @@ const Home = (props) => {
 
   useEffect(() => {
     const loadData = async () => {
+      // use the getter method from ABI to get info about the lottery contract
       const price = await ProviderContract.price();
       const managerOne = await ProviderContract.managers(0);
       const managerTwo = await ProviderContract.managers(1);
@@ -46,10 +44,8 @@ const Home = (props) => {
       const p = await ProviderContract.getBalance();
       const numSold = await ProviderContract.num_sold();
       const provider = await detectEthereumProvider();
-      const balances = await TokenProviderContract.balanceOf(
-        provider.selectedAddress
-      );
-      console.log("balances: ", balances);
+
+      // set the contract info so that they can be displayed at the web page
       setPrize(Number(p));
       setAddress(provider.selectedAddress);
       setPrice(Number(price));
@@ -59,8 +55,9 @@ const Home = (props) => {
       setStartTime(new Date(start_time));
       setSold(Number(numSold));
       setLoading(false);
+
+      //dynamically detect accounts change in metamask
       window.ethereum.on("accountsChanged", function (accounts) {
-        // Time to reload your interface with accounts[0]!
         setAddress(accounts[0]);
       });
     };

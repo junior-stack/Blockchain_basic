@@ -1,6 +1,6 @@
 import LayOut from "../../Components/LayOut/LayOut";
 import { Container } from "@mui/system";
-import { Button, Menu, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import "./BuyTicket.css";
@@ -17,7 +17,6 @@ const BuyTicket = (props) => {
 
   const buy = async () => {
     setLoading(true);
-    // await SignerContract.resetPrice(30);
     const balances = await TokenProviderContract.balanceOf(Address);
     if (balances < amount * price) {
       window.alert("You do not have enough balance");
@@ -78,8 +77,8 @@ const BuyTicket = (props) => {
             />
           </div>
           <div className="QuantityField">
-            <div className="label">Total $ROT</div>
-            <div className="price">250</div>
+            <div className="label">Total $ERC</div>
+            <div className="price">{amount * price}</div>
           </div>
           <div className="QuantityField">
             <Button
