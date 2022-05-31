@@ -10,8 +10,16 @@ import {
 import Toolbar from "@mui/material/Toolbar";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SendIcon from "@mui/icons-material/Send";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "./LayOut.css";
+import { useNavigate } from "react-router-dom";
+
 const LayOut = (props) => {
+  let navigate = useNavigate();
+
+  const back = async () => {
+    navigate("/home");
+  };
   return (
     <Box>
       <Box
@@ -30,6 +38,16 @@ const LayOut = (props) => {
               height: "110px",
             }}
           >
+            <ArrowBackIcon
+              sx={{
+                position: "relative",
+                left: "-920px",
+                width: "150px",
+                height: "80px",
+                cursor: "pointer",
+              }}
+              onClick={back}
+            />
             <Typography variant="h1">{props.title}</Typography>
           </Toolbar>
         </AppBar>
