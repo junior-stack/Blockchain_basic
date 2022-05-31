@@ -33,6 +33,8 @@ const Home = (props) => {
 
   const [price, setPrice] = useState(0);
 
+  const [sold, setSold] = useState(0);
+
   useEffect(() => {
     const loadData = async () => {
       const price = await ProviderContract.price();
@@ -41,14 +43,16 @@ const Home = (props) => {
       const owner = await ProviderContract.owner();
       const start_time = await ProviderContract.start_time();
       const p = await ProviderContract.getBalance();
+      const numSold = await ProviderContract.num_sold();
       const provider = await detectEthereumProvider();
-      setPrize(Number(p) * 0.95);
+      setPrize(Number(p));
       setAddress(provider.selectedAddress);
       setPrice(Number(price));
       setManagerOne(managerOne);
       setManagerTwo(managerTwo);
       setOwner(owner);
       setStartTime(new Date(start_time));
+      setSold(Number(numSold));
       setLoading(false);
       window.ethereum.on("accountsChanged", function (accounts) {
         // Time to reload your interface with accounts[0]!
@@ -139,7 +143,7 @@ const Home = (props) => {
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    {prize} $ROT
+                    {prize} $ERC
                   </Typography>
                 </WebCard>
                 <WebCard title="winning prize">
@@ -148,16 +152,16 @@ const Home = (props) => {
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    {prize} $ROT
+                    {prize * 0.95} $ERC
                   </Typography>
                 </WebCard>
-                <WebCard title="winning ticket">
+                <WebCard title="Number Sold">
                   <Typography
                     textAlign="center"
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    1,000,000 $ROT
+                    {sold}
                   </Typography>
                 </WebCard>
               </Stack>

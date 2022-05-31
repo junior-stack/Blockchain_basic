@@ -3,23 +3,34 @@ import LayOut from "../../Components/LayOut/LayOut";
 import Context from "../../Context/Context";
 import { Stack, Button } from "@mui/material";
 import { Container } from "@mui/system";
+import { TextField } from "@mui/material";
 import "./OrganizerPage.css";
 
 const OrganizerPage = (props) => {
-  const { Address, Owner, SignerContract } = useContext(Context);
+  const { Address, Owner, SignerContract, StartTime, ManagerOne, ManagerTwo } =
+    useContext(Context);
 
   const [loading, setLoading] = useState(false);
 
+  const [price, setPrice] = useState(0);
+
+  const change = (e) => {
+    setPrice(e.target.value);
+  };
   const pickWinner = async () => {
     setLoading(true);
     await SignerContract.pickWinner();
     setLoading(false);
   };
 
-  const Withdraw = async () => {
+  const reset = async () => {
     setLoading(true);
-    await SignerContract.withdraw();
-    setLoading(true);
+    try {
+      await SignerContract.resetPrice(price);
+    } catch (err) {
+      window.alert(err.message);
+    }
+    setLoading(false);
   };
 
   return (
@@ -39,19 +50,36 @@ const OrganizerPage = (props) => {
                 variant="contained"
                 sx={{ height: "70px", width: "280px" }}
                 onClick={pickWinner}
+                disabled={
+                  Math.abs(Date.now() - StartTime) / 1000 / 3600 < 5 ||
+                  (Number(Address) !== Number(Owner) &&
+                    Number(Address) !== Number(ManagerTwo) &&
+                    Number(Address) !== Number(ManagerOne))
+                }
               >
                 Pick a winner
               </Button>
             </div>
           </div>
-          <div className="wrapper">
+          <div className="wrapper1">
+            <TextField
+              label="Number"
+              type="number"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              className="inputfield"
+              onChange={change}
+              sx={{ marginRight: "20px" }}
+            />
             <Button
               variant="contained"
-              sx={{ height: "70px", width: "280px" }}
-              onClick={Withdraw}
-              disabled={Address !== Owner}
+              sx={{ height: "56px", width: "280px" }}
+              disabled={Number(Address) !== Number(Owner)}
+              className="submit"
+              onClick={reset}
             >
-              Withdraw the ussage fee
+              Reset
             </Button>
           </div>
         </Stack>

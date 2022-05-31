@@ -7,5 +7,19 @@
 .wrapper {
   display: flex;
   justify-content: center;
-  align-content: center;
+}
+
+.wrapper1 {
+  display: flex;
+  justify-content: space-around;
+  row-gap: 10px;
+  margin-top: 300px;
+}
+
+.inputfield {
+  flex-grow: 1.5;
+}
+
+.submit {
+  flex-grow: 0;
 }
