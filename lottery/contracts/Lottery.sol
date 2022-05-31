@@ -12,11 +12,9 @@ contract Lottery{
     mapping(uint => address payable) public ticketMapUser;
     uint public price;
     uint public ticket_number;
-    uint public ussage_fee;
     uint public start_time;
     uint public num_sold;
     ERC20 token;
-    bool public ongoing;
     event TransferSent(address _from, address _destAddr, uint _amount);
 
     constructor(address manager1, address manager2, address moktoken) {
@@ -24,14 +22,14 @@ contract Lottery{
         managers.push(manager1);
         managers.push(manager2);
         owner = msg.sender;
+        console.log("Lottery msg sender: ", msg.sender);
         price = 20;
         ticket_number =0;
-        ongoing = true;
         start_time = block.timestamp;
         num_sold = 0;
     }
 
-    function buyTicket(address from, uint amount) public onGoing returns (uint){
+    function buyTicket(address from, uint amount) public returns (uint){
         // 1. transfer token from buyer to this contract account: transfer()
         uint256 erc20balance = token.balanceOf(from);
         uint256 quantity = amount * price;
@@ -56,47 +54,32 @@ contract Lottery{
 
     }
 
-    function withdraw() public {
-        // 0. The owner can only withdraw ussage fee when the lottery is ended
-        require(ongoing == false, "The owner can only withdraw ussage fee when the lottery is ended");
-        // 1. use require to check whether the sender is owner
-        require(msg.sender == owner, "Only owners can withdraw funds");
-
-        // 2. transfer ussage_fee of the token to the owner
-        token.transfer(address(owner), ussage_fee);
-
-        // 3. reset the ussage fee to 0
-        ussage_fee = 0;
-
-    }
 
     function random() private view returns (uint) {
         return uint(keccak256(abi.encodePacked(ticket_number)));
     }
 
-    function pickWinner() public onGoing{
+    function pickWinner() public{
         //0. check 5 min and whether the game is ongoing: add a field of start time
-
-        // 1. use require to check whether the sender is owner or manager
-        require(msg.sender == owner || msg.sender == managers[0] || msg.sender == managers[1], "You are not the owner or manager");
 
         // 2. use random to generate winner ticket number
         uint win = random() % ticket_number;
         // 3. Get the winner and send money to him
         uint balance = token.balanceOf(address(this));
-        uint lottery_pool = (balance - ussage_fee) * 95 / 100;  // the owner may not withdraw the accmulative ussage fee of previous lotteries
+        uint lottery_pool = balance * 95 / 100;  // the owner may not withdraw the accmulative ussage fee of previous lotteries
         console.log("win: ", win);
         console.log("winner: ", ticketMapUser[win]);
         console.log("balance: ", balance);
         token.transfer(ticketMapUser[win], lottery_pool);
+        token.transfer(address(owner), balance - lottery_pool);
         // add the ussage fee
-        ussage_fee += balance - lottery_pool;
 
         // Reset the game
         price = 20;
         ticket_number = 0;
-        ongoing = false;
+
         num_sold = 0;
+        start_time = block.timestamp;
 
     }
 
@@ -111,12 +94,11 @@ contract Lottery{
         price = newprice;
     }
 
-    modifier onGoing(){
-        require(ongoing == true, "This action can only be performed when the lottery round is ongoing");
-        _;
+    function getBalance() public view returns (uint){
+        return token.balanceOf(address(this));
     }
 
-    //
+
 
 }
 
