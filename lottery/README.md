@@ -83,7 +83,9 @@ Go to the buy page and input a quantity:
 
 ## 4. How the manager draw winner unsuccessfully
 
-5 minutes
++ The owner cannot draw a lottery within 5 minutes after a new round start. If the owner tries to draw a lottery in less than 5 minutes after the new round starts, he should be able to see the pick a winner button be disabled
+
++ If nobody is buying the tickets, then the owner cannot draw the winner. Then when the owner clicks the pick a winner button, he will get a window pop up filled with error message
 
 
 
@@ -112,3 +114,7 @@ Go to the buy page and input a quantity:
 Switch to a non-owner account, you can use your own account. Go to the organizer page
 
 You can see the reset button disabled. If you use a non organizer  and non manager account to go to this page, you will also see the pick a winner button disabled. ![image-20220531195143397](README.assets/image-20220531195143397.png)
+
+
+
+Another such situation occurs is that when there has already been users buying the ticket with the old price. Then the owner could not reset the price. For example, when the owner creates a new round and a user buys the ticket with 20 ERC price. Then if the owner resets the price, he will gets a window pop up filled with error message

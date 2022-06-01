@@ -52,7 +52,7 @@ const Home = (props) => {
       setManagerOne(managerOne);
       setManagerTwo(managerTwo);
       setOwner(owner);
-      setStartTime(new Date(start_time));
+      setStartTime(new Date(Number(start_time) * 1000));
       setSold(Number(numSold));
       setLoading(false);
 
