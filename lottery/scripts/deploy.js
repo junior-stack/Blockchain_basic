@@ -1,11 +1,10 @@
-const { ethers, network } = require("hardhat");
+const { ethers } = require("hardhat");
 
 async function main() {
-  // const contract_owner = await ethers.getSigner(network.config.from);
   const Lottery = await ethers.getContractFactory("Lottery");
-  [owner, addr1, addr2] = await ethers.getSigners();
   const Token = await ethers.getContractFactory("MokToken");
-  token = await Token.deploy(process.env.REACT_APP_BUYER_ADDRESS);
+  [owner, addr1, addr2] = await ethers.getSigners();
+  token = await Token.deploy(process.env.REACT_APP_BUYER_ADDRESS, 500);
   lottery = await Lottery.deploy(addr1.address, addr2.address, token.address);
   console.log(`token deployed at ${token.address}`);
   console.log(`lottery deployed at ${lottery.address}`);

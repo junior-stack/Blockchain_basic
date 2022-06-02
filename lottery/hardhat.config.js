@@ -27,6 +27,14 @@ const PRIVATE_KEY_MANAGER_ONE = result.parsed.REACT_APP_PRIVATE_KEY_MANAGER_ONE;
 
 const PRIVATE_KEY_MANAGER_TWO = result.parsed.REACT_APP_PRIVATE_KEY_MANAGER_TWO;
 
+const LOCAL_PRIVATE_KEY_DEPLOYER =
+  result.parsed.REACT_APP_LOCAL_PRIVATE_KEY_DEPLOYER;
+
+const LOCAL_PRIVATE_KEY_MANAGER_ONE =
+  result.parsed.REACT_APP_LOCAL_PRIVATE_KEY_MANAGER_ONE;
+
+const LOCAL_PRIVATE_KEY_MANAGER_TWO =
+  result.parsed.REACT_APP_LOCAL_PRIVATE_KEY_MANAGER_TWO;
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -37,9 +45,9 @@ module.exports = {
     rinkeby: {
       url: INFURA_URL,
       accounts: [
-        `0x${PRIVATE_KEY_DEPLOYER}`,
-        `0x${PRIVATE_KEY_MANAGER_ONE}`,
-        `0x${PRIVATE_KEY_MANAGER_TWO}`,
+        `${PRIVATE_KEY_DEPLOYER}`,
+        `${PRIVATE_KEY_MANAGER_ONE}`,
+        `${PRIVATE_KEY_MANAGER_TWO}`,
       ],
     },
     hardhat: {
@@ -48,6 +56,11 @@ module.exports = {
     },
     localhost: {
       from: result.parsed.REACT_APP_HARDHAT_ACCOUNT,
+      accounts: [
+        `${LOCAL_PRIVATE_KEY_DEPLOYER}`,
+        `${LOCAL_PRIVATE_KEY_MANAGER_ONE}`,
+        `${LOCAL_PRIVATE_KEY_MANAGER_TWO}`,
+      ],
     },
   },
   paths: {
