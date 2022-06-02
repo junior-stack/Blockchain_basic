@@ -18,3 +18,11 @@
   flex-grow: 1.5;
   align-items: center;
 }
+
+.agree {
+  position: relative;
+  right: -100px;
+  text-align: start;
+  flex-grow: 1.5;
+  align-items: center;
+}

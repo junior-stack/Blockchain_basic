@@ -33,6 +33,8 @@ const Home = (props) => {
 
   const [sold, setSold] = useState(0);
 
+  const [ussage, setUssage] = useState(0);
+
   useEffect(() => {
     const loadData = async () => {
       // use the getter method from ABI to get info about the lottery contract
@@ -40,13 +42,15 @@ const Home = (props) => {
       const managerOne = await ProviderContract.managers(0);
       const managerTwo = await ProviderContract.managers(1);
       const owner = await ProviderContract.owner();
-      const start_time = await ProviderContract.start_time();
+      const start_time = await ProviderContract.endTimeThreshold();
       const p = await ProviderContract.getBalance();
       const numSold = await ProviderContract.num_sold();
       const provider = await detectEthereumProvider();
+      const ussageFee = await ProviderContract.ussage_fee();
 
       // set the contract info so that they can be displayed at the web page
       setPrize(Number(p));
+      setUssage(Number(ussageFee));
       setAddress(provider.selectedAddress);
       setPrice(Number(price));
       setManagerOne(managerOne);
@@ -145,7 +149,7 @@ const Home = (props) => {
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    {prize} $ERC
+                    {prize / Math.pow(10, 18)} $ERC
                   </Typography>
                 </WebCard>
                 <WebCard title="winning prize">
@@ -154,7 +158,7 @@ const Home = (props) => {
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    {prize * 0.95} $ERC
+                    {(prize - ussage) / Math.pow(10, 18).toFixed(2)} $ERC
                   </Typography>
                 </WebCard>
                 <WebCard title="Number Sold">
@@ -176,7 +180,7 @@ const Home = (props) => {
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    {price} $ERC
+                    {price / Math.pow(10, 18)} $ERC
                   </Typography>
                   <Container>
                     <div className="buyButton">
@@ -191,7 +195,7 @@ const Home = (props) => {
                   </Container>
                 </Stack>
               </WebCard>
-              <WebCard title="Start Time">
+              <WebCard title="Close Time">
                 <Stack spacing={0}>
                   <Typography
                     textAlign="center"

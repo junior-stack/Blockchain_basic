@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import LayOut from "../../Components/LayOut/LayOut";
 import Context from "../../Context/Context";
 import { Stack, Button } from "@mui/material";
@@ -7,12 +7,21 @@ import { TextField } from "@mui/material";
 import "./OrganizerPage.css";
 
 const OrganizerPage = (props) => {
-  const { Address, Owner, SignerContract, StartTime, ManagerOne, ManagerTwo } =
-    useContext(Context);
+  const {
+    Address,
+    Owner,
+    SignerContract,
+    StartTime,
+    ManagerOne,
+    ManagerTwo,
+    ProviderContract,
+  } = useContext(Context);
 
   const [loading, setLoading] = useState(false);
 
   const [price, setPrice] = useState(0);
+
+  const [ussageFee, setUssageFee] = useState(0);
 
   const change = (e) => {
     setPrice(e.target.value);
@@ -27,6 +36,12 @@ const OrganizerPage = (props) => {
     setLoading(false);
   };
 
+  const withDraw = async () => {
+    setLoading(true);
+    await SignerContract.withdraw();
+    setLoading(false);
+  };
+
   const reset = async () => {
     setLoading(true);
     try {
@@ -36,6 +51,16 @@ const OrganizerPage = (props) => {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    setLoading(true);
+    const f = async () => {
+      const fee = await ProviderContract.ussage_fee();
+      setUssageFee(fee);
+    };
+    f();
+    setLoading(false);
+  }, []);
 
   return (
     <LayOut title="Organizer Page" loading={loading}>
@@ -55,13 +80,25 @@ const OrganizerPage = (props) => {
                 sx={{ height: "70px", width: "280px" }}
                 onClick={pickWinner}
                 disabled={
-                  Math.abs(Date.now() - StartTime) / 1000 / 3600 < 5 ||
+                  Date.now() < StartTime ||
                   (Number(Address) !== Number(Owner) &&
                     Number(Address) !== Number(ManagerTwo) &&
                     Number(Address) !== Number(ManagerOne))
                 }
               >
                 Pick a winner
+              </Button>
+            </div>
+          </div>
+          <div className="wrapper">
+            <div>
+              <Button
+                variant="contained"
+                sx={{ height: "70px", width: "280px" }}
+                onClick={withDraw}
+                disabled={Number(Address) !== Number(Owner) && ussageFee === 0}
+              >
+                Withdraw
               </Button>
             </div>
           </div>
@@ -83,7 +120,7 @@ const OrganizerPage = (props) => {
               className="submit"
               onClick={reset}
             >
-              Reset
+              Change Price
             </Button>
           </div>
         </Stack>

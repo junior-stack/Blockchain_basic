@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import "./BuyTicket.css";
 import { useContext, useEffect, useState } from "react";
 import Context from "../../Context/Context";
+import Checkbox from "@mui/material/Checkbox";
 const BuyTicket = (props) => {
   const { SignerContract, Address, TokenProviderContract, ProviderContract } =
     useContext(Context);
@@ -15,10 +16,13 @@ const BuyTicket = (props) => {
 
   const [price, setPrice] = useState(0);
 
+  const [agree, setAgree] = useState(false);
+
+  const [balance, setBalance] = useState(0);
+
   const buy = async () => {
     setLoading(true);
-    const balances = await TokenProviderContract.balanceOf(Address);
-    if (balances < amount * price) {
+    if (balance < amount * price) {
       window.alert("You do not have enough balance");
       setLoading(false);
       return;
@@ -35,11 +39,17 @@ const BuyTicket = (props) => {
     setAmount(e.target.value);
   };
 
+  const Agree = (e) => {
+    setAgree(!agree);
+  };
+
   useEffect(() => {
     setLoading(true);
     const loadPrice = async () => {
       const p = await ProviderContract.price();
+      const balance = await TokenProviderContract.balanceOf(Address);
       setPrice(Number(p));
+      setBalance(Number(balance));
     };
     loadPrice();
     setLoading(false);
@@ -61,7 +71,7 @@ const BuyTicket = (props) => {
               Ticket Price
             </Typography>
             <Typography variant="h2" align="center">
-              {price} $ ERC
+              {price / Math.pow(10, 18)} $ ERC
             </Typography>
           </Stack>
           <div className="QuantityField">
@@ -78,13 +88,26 @@ const BuyTicket = (props) => {
           </div>
           <div className="QuantityField">
             <div className="label">Total $ERC</div>
-            <div className="price">{amount * price}</div>
+            <div className="price">{(amount * price) / Math.pow(10, 18)}</div>
+          </div>
+          <div className="QuantityField">
+            <div className="label">
+              <Checkbox
+                sx={{ position: "relative", right: "-120px" }}
+                onChange={Agree}
+              />
+            </div>
+            <div className="agree">
+              You have balance of {balance / Math.pow(10, 18)} and you approve
+              this transaction
+            </div>
           </div>
           <div className="QuantityField">
             <Button
               variant="contained"
               sx={{ height: "70px", width: "280px", bgcolor: "#83ae58" }}
               onClick={buy}
+              disabled={!agree}
             >
               Buy
             </Button>
