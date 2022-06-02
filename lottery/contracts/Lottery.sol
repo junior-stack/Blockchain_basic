@@ -23,11 +23,11 @@ contract Lottery is AccessControlEnumerable{
         _setupRole(MANAGER, manager2);
         price = 20 * (10 ** 18);
         ticket_number =0;
-        endTimeThreshold = block.timestamp + 5 * 60;
+        endTimeThreshold = block.timestamp + 5 minutes;
         num_sold = 0;
     }
 
-    function buyTicket(address from, uint amount) public{
+    function buyTicket(address from, uint amount) external{
         // 1. transfer token from buyer to this contract account: transfer()
         uint256 quantity = amount * price;
         uint i;
@@ -51,15 +51,14 @@ contract Lottery is AccessControlEnumerable{
         return uint(keccak256(abi.encodePacked(ticket_number)));
     }
 
-    function pickWinner() public{
+    function pickWinner() external checkOwner checkManager{
         //0. check 5 min and whether the game is ongoing: add a field of start time
         require(endTimeThreshold <= block.timestamp, "You need to draw the lottery 5 min after the game");
-        require(hasRole(OWNER, msg.sender) || hasRole(MANAGER, msg.sender), "Only the managers or owner could pick a winner");
         uint tick_num = ticket_number;
         ticket_number = 0;
 
         num_sold = 0;
-        endTimeThreshold = block.timestamp + 5 * 60;
+        endTimeThreshold = block.timestamp + 5 minutes;
 
         // 2. use random to generate winner ticket number
         uint win = random() % tick_num;
@@ -75,10 +74,9 @@ contract Lottery is AccessControlEnumerable{
 
     }
 
-    function resetPrice(uint newprice) public {
+    function setPrice(uint newprice) external checkOwner{
 
-        // 2. Check whether the lottery is ongoing
-        require(hasRole(OWNER, msg.sender), "Only the owner could reset the price");
+        // 2. Check whether the lottery is ongoin
         // 3. reset the price
         price = newprice * (10 ** 18);
     }
@@ -87,11 +85,20 @@ contract Lottery is AccessControlEnumerable{
         return token.balanceOf(address(this));
     }
 
-    function withdraw() public {
-        require(hasRole(OWNER, msg.sender), "You are not the owner of this contract");
+    function withdraw() external checkOwner{
         uint last_ussage = ussage_fee;
         ussage_fee = 0;
         token.transfer(getRoleMember(OWNER, 0), last_ussage);
+    }
+
+    modifier checkOwner(){
+        require(hasRole(OWNER, msg.sender), "Only the owner could reset the price");
+        _;
+    }
+
+    modifier checkManager(){
+        require(hasRole(MANAGER, msg.sender), "Only the managers could pick a winner");
+        _;
     }
 
     function owner() public view returns (address){

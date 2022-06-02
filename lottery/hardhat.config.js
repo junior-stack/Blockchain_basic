@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan")
 
 const result = require("dotenv").config({ path: ".env" });
 
@@ -62,6 +63,9 @@ module.exports = {
         `${LOCAL_PRIVATE_KEY_MANAGER_TWO}`,
       ],
     },
+  },
+  etherscan: {
+    apiKey: "KCW4EIP2RMWJPPDCSNHGIJ21WIXQCEVTX6"
   },
   paths: {
     cache: "./src/cache",
