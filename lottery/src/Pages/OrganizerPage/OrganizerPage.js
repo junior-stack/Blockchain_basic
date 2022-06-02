@@ -23,6 +23,8 @@ const OrganizerPage = (props) => {
 
   const [ussageFee, setUssageFee] = useState(0);
 
+  const [numSold, setNumSold] = useState(0);
+
   const change = (e) => {
     setPrice(e.target.value);
   };
@@ -56,7 +58,9 @@ const OrganizerPage = (props) => {
     setLoading(true);
     const f = async () => {
       const fee = await ProviderContract.ussage_fee();
-      setUssageFee(fee);
+      const num = await ProviderContract.num_sold();
+      setUssageFee(Number(fee));
+      setNumSold(Number(num));
     };
     f();
     setLoading(false);
@@ -83,7 +87,8 @@ const OrganizerPage = (props) => {
                   Date.now() < StartTime ||
                   (Number(Address) !== Number(Owner) &&
                     Number(Address) !== Number(ManagerTwo) &&
-                    Number(Address) !== Number(ManagerOne))
+                    Number(Address) !== Number(ManagerOne)) ||
+                  numSold === 0
                 }
               >
                 Pick a winner
@@ -96,7 +101,7 @@ const OrganizerPage = (props) => {
                 variant="contained"
                 sx={{ height: "70px", width: "280px" }}
                 onClick={withDraw}
-                disabled={Number(Address) !== Number(Owner) && ussageFee === 0}
+                disabled={Number(Address) !== Number(Owner) || ussageFee === 0}
               >
                 Withdraw
               </Button>
