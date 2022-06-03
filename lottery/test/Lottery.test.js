@@ -49,6 +49,30 @@ describe("pick winner", function(){
     }
   })
 
+  it("checks if the other manager could pick winner", async () => {
+    await network.provider.send("evm_increaseTime", [5 * 60]);
+    await network.provider.send("evm_mine");
+    try{
+      const signer2 = lottery.provider.getSigner(addr2.address);
+      await lottery.connect(signer2).pickWinner();
+      assert(true)
+    } catch(err) {
+      assert(false)
+    }
+  })
+
+  it("checks if the owner could pick winner", async () => {
+    await network.provider.send("evm_increaseTime", [5 * 60]);
+    await network.provider.send("evm_mine");
+    try{
+      const signer2 = lottery.provider.getSigner(owner.address);
+      await lottery.connect(signer2).pickWinner();
+      assert(true)
+    } catch(err) {
+      assert(false)
+    }
+  })
+
   it("checks the state is changed correctly: ", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
