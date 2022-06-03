@@ -47,7 +47,7 @@ const OrganizerPage = (props) => {
   const reset = async () => {
     setLoading(true);
     try {
-      await SignerContract.resetPrice(price);
+      await SignerContract.setPrice(price);
     } catch (err) {
       window.alert(err.message);
     }
