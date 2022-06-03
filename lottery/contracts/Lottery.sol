@@ -13,6 +13,7 @@ contract Lottery is AccessControlEnumerable{
     uint public endTimeThreshold;  // starttimeplusfiveminutes
     uint public ussage_fee;
     uint public num_sold;
+    address public winner;
     IERC20 token;
     event TransferSent(address _from, address _destAddr, uint _amount);
 
@@ -23,6 +24,7 @@ contract Lottery is AccessControlEnumerable{
         _setupRole(MANAGER, manager2);
         price = 20 * (10 ** 18);
         ticket_number =0;
+        winner = address(0);
         endTimeThreshold = block.timestamp + 5 minutes;
         num_sold = 0;
     }
@@ -51,8 +53,9 @@ contract Lottery is AccessControlEnumerable{
         return uint(keccak256(abi.encodePacked(ticket_number)));
     }
 
-    function pickWinner() external checkOwner checkManager{
+    function pickWinner() external {
         //0. check 5 min and whether the game is ongoing: add a field of start time
+        require(hasRole(MANAGER, msg.sender) || hasRole(OWNER, msg.sender), "Only the managers could pick a winner");
         require(endTimeThreshold <= block.timestamp, "You need to draw the lottery 5 min after the game");
         uint tick_num = ticket_number;
         ticket_number = 0;
@@ -65,6 +68,7 @@ contract Lottery is AccessControlEnumerable{
         // 3. Get the winner and send money to him
         uint balance = token.balanceOf(address(this));
         uint lottery_pool = balance - ussage_fee;  // the owner may not withdraw the accmulative ussage fee of previous lotteries
+        winner = ticketMapUser[win];
         token.transfer(ticketMapUser[win], lottery_pool);
         // token.transfer(address(owner), balance - lottery_pool);  remove this line and add withdraw as separate function
         // add the ussage fee
@@ -96,10 +100,6 @@ contract Lottery is AccessControlEnumerable{
         _;
     }
 
-    modifier checkManager(){
-        require(hasRole(MANAGER, msg.sender), "Only the managers could pick a winner");
-        _;
-    }
 
     function owner() public view returns (address){
         return getRoleMember(OWNER, 0);
