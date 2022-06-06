@@ -16,7 +16,7 @@ describe("pick winner", function(){
     lottery = await Lottery.deploy(addr1.address, addr2.address, token.address);
 
     //addr1 buys the tickets
-    await lottery.buyTicket(addr1.address, 25);
+    await lottery.connect(addr1).buyTicket(25);
   })
 
   it("checks five minutes", async () => {
@@ -72,10 +72,10 @@ describe("pick winner", function(){
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     await lottery.pickWinner();
-    const ticket_num = await lottery.ticket_number();
-    const num_sold = await lottery.num_sold();
-    assert(Number(ticket_num) === 0);
-    assert(Number(num_sold) === 0);
+    const ticket_num = await lottery.ticketNumber();
+    const num_sold = await lottery.numSold();
+    assert(ticket_num.toString() === '0');
+    assert(num_sold.toString() === '0');
   })
 
   it("checks winner has got right amount", async () => {
@@ -84,7 +84,6 @@ describe("pick winner", function(){
     await lottery.pickWinner();
     const winner = await lottery.winner();
     let balance = await token.balanceOf(winner);
-    balance = Number(balance)
     assert(balance == old_balance * 0.95);
   })
 

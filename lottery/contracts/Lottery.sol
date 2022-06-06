@@ -99,7 +99,7 @@ contract Lottery is AccessControlEnumerable{
         token.transfer(getRoleMember(OWNER, 0), lastUssage);
 
         // emit the withDraw event
-        emit withDraw(usageFee, owner);
+        emit withDraw(usageFee, owner());
     }
 
     modifier checkOwner(){
