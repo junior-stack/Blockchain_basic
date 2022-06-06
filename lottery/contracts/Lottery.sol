@@ -9,13 +9,16 @@ contract Lottery is AccessControlEnumerable{
     bytes32 public constant MANAGER = keccak256("managers");
     mapping(uint => address payable) public ticketMapUser;
     uint public price;
-    uint public ticket_number;
-    uint public endTimeThreshold;  // starttimeplusfiveminutes
-    uint public ussage_fee;
-    uint public num_sold;
+    uint public ticketNumber;
+    uint public endTimeThreshold;  
+    uint public usageFee;
+    uint public numSold;
     address public winner;
     IERC20 token;
-    event TransferSent(address _from, address _destAddr, uint _amount);
+    event buy(address sender, uint amount, uint price);
+    event pick(address winner, uint ticketNum, uint prize);
+    event priceChange(uint old_price, uint new_price);
+    event withDraw(uint usageFee, address own);
 
     constructor(address manager1, address manager2, address moktoken) {
         token = IERC20(moktoken);
@@ -23,66 +26,66 @@ contract Lottery is AccessControlEnumerable{
         _setupRole(MANAGER, manager1);
         _setupRole(MANAGER, manager2);
         price = 20 * (10 ** 18);
-        ticket_number =0;
+        ticketNumber =0;
         winner = address(0);
         endTimeThreshold = block.timestamp + 5 minutes;
-        num_sold = 0;
+        numSold = 0;
     }
 
-    function buyTicket(address from, uint amount) external{
-        // 1. transfer token from buyer to this contract account: transfer()
+    function buyTicket(uint amount) external{
+        // 1. update ticketMapUser, numSold and usageFee
         uint256 quantity = amount * price;
         uint i;
         for(i = 0; i < amount; i++){
-            ticketMapUser[ticket_number] = payable(from);
-            ticket_number++;
+            ticketMapUser[ticketNumber] = payable(msg.sender);
+            ticketNumber++;
         }
-        num_sold += amount;
-        ussage_fee += quantity * 500 / 10000;
+        numSold += amount;
+        usageFee += quantity * 500 / 10000;
 
-        token.transferFrom(from, address(this), quantity);
+        //send the token to the contract's address from the buyer's address
+        token.transferFrom(msg.sender, address(this), quantity);
 
-        // 2. ticket_number++
-        // 3. assign tickets to buyers
-        
-
+        //emit the event
+        emit buy(msg.sender, amount, price);
     }
 
 
     function random() private view returns (uint) {
-        return uint(keccak256(abi.encodePacked(ticket_number)));
+        return uint(keccak256(abi.encodePacked(ticketNumber)));
     }
 
     function pickWinner() external {
-        //0. check 5 min and whether the game is ongoing: add a field of start time
-        require(hasRole(MANAGER, msg.sender) || hasRole(OWNER, msg.sender), "Only the managers could pick a winner");
+        //0. check this function must be called 5 min after the new round and the caller must be either manager or owner
         require(endTimeThreshold <= block.timestamp, "You need to draw the lottery 5 min after the game");
-        uint tick_num = ticket_number;
-        ticket_number = 0;
+        require(hasRole(MANAGER, msg.sender) || hasRole(OWNER, msg.sender), "Only the managers could pick a winner");
 
-        num_sold = 0;
+        // reset the ticketNumber and number of sold out ticket for the new round
+        uint ticknum = ticketNumber;
+        ticketNumber = 0;
+        numSold = 0;
         endTimeThreshold = block.timestamp + 5 minutes;
 
-        // 2. use random to generate winner ticket number
-        uint win = random() % tick_num;
-        // 3. Get the winner and send money to him
-        uint balance = token.balanceOf(address(this));
-        uint lottery_pool = balance - ussage_fee;  // the owner may not withdraw the accmulative ussage fee of previous lotteries
+        // find the winner of the lottery
+        uint win = random() % ticknum;
         winner = ticketMapUser[win];
-        token.transfer(ticketMapUser[win], lottery_pool);
-        // token.transfer(address(owner), balance - lottery_pool);  remove this line and add withdraw as separate function
-        // add the ussage fee
 
-        // Reset the game
+        // Calculate the right amount and transfer to the buyer
+        uint balance = token.balanceOf(address(this));
+        uint lotteryPool = balance - usageFee;  // the owner may not withdraw the accmulative ussage fee of previous lotteries
+        token.transfer(ticketMapUser[win], lotteryPool);
+
+        // emit the pick event
+        emit pick(winner, ticketNumber, lotteryPool);
         
 
     }
 
     function setPrice(uint newprice) external checkOwner{
-
-        // 2. Check whether the lottery is ongoin
-        // 3. reset the price
+        // set the price and emit the priceChange event
+        uint oldPrice = price;
         price = newprice * (10 ** 18);
+        emit priceChange(oldPrice, price);
     }
 
     function getBalance() public view returns (uint){
@@ -90,9 +93,13 @@ contract Lottery is AccessControlEnumerable{
     }
 
     function withdraw() external checkOwner{
-        uint last_ussage = ussage_fee;
-        ussage_fee = 0;
-        token.transfer(getRoleMember(OWNER, 0), last_ussage);
+        // transfer the usage fee and set the ussage fee to 0
+        uint lastUssage = usageFee;
+        usageFee = 0;
+        token.transfer(getRoleMember(OWNER, 0), lastUssage);
+
+        // emit the withDraw event
+        emit withDraw(usageFee, owner);
     }
 
     modifier checkOwner(){
@@ -110,4 +117,6 @@ contract Lottery is AccessControlEnumerable{
     }
 
 }
+
+// use expect statement from chai, u
 
