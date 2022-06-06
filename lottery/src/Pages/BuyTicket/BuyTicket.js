@@ -7,6 +7,7 @@ import "./BuyTicket.css";
 import { useContext, useEffect, useState } from "react";
 import Context from "../../Context/Context";
 import Checkbox from "@mui/material/Checkbox";
+import { ethers } from "ethers";
 const BuyTicket = (props) => {
   const { SignerContract, Address, TokenProviderContract, ProviderContract } =
     useContext(Context);
@@ -48,8 +49,8 @@ const BuyTicket = (props) => {
     const loadPrice = async () => {
       const p = await ProviderContract.price();
       const balance = await TokenProviderContract.balanceOf(Address);
-      setPrice(Number(p));
-      setBalance(Number(balance));
+      setPrice(p);
+      setBalance(balance);
     };
     loadPrice();
     setLoading(false);
@@ -88,7 +89,7 @@ const BuyTicket = (props) => {
           </div>
           <div className="QuantityField">
             <div className="label">Total $ERC</div>
-            <div className="price">{(amount * price) / Math.pow(10, 18)}</div>
+            <div className="price">{ethers.utils.formatEther(p)}</div>
           </div>
           <div className="QuantityField">
             <div className="label">
@@ -98,8 +99,8 @@ const BuyTicket = (props) => {
               />
             </div>
             <div className="agree">
-              You have balance of {balance / Math.pow(10, 18)} and you approve
-              this transaction
+              You have balance of {ethers.utils.formatEther(balance)} and you
+              approve this transaction
             </div>
           </div>
           <div className="QuantityField">

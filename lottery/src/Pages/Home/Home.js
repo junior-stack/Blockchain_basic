@@ -11,6 +11,7 @@ import SendIcon from "@mui/icons-material/Send";
 import Context from "../../Context/Context";
 import detectEthereumProvider from "@metamask/detect-provider";
 import { useNavigate } from "react-router-dom";
+import { ethers } from "ethers";
 
 const Home = (props) => {
   const {
@@ -49,15 +50,15 @@ const Home = (props) => {
       const ussageFee = await ProviderContract.ussage_fee();
 
       // set the contract info so that they can be displayed at the web page
-      setPrize(Number(p));
-      setUssage(Number(ussageFee));
+      setPrize(p);
+      setUssage(ussageFee);
       setAddress(provider.selectedAddress);
-      setPrice(Number(price));
+      setPrice(price);
       setManagerOne(managerOne);
       setManagerTwo(managerTwo);
       setOwner(owner);
       setStartTime(new Date(Number(start_time) * 1000));
-      setSold(Number(numSold));
+      setSold(numSold);
       setLoading(false);
 
       //dynamically detect accounts change in metamask
@@ -149,7 +150,7 @@ const Home = (props) => {
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    {prize / Math.pow(10, 18)} $ERC
+                    {ethers.utils.formatEther(prize)} $ERC
                   </Typography>
                 </WebCard>
                 <WebCard title="winning prize">
@@ -158,7 +159,7 @@ const Home = (props) => {
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    {(prize - ussage) / Math.pow(10, 18).toFixed(2)} $ERC
+                    {ethers.utils.formatEther(prize - ussage)} $ERC
                   </Typography>
                 </WebCard>
                 <WebCard title="Number Sold">
@@ -167,7 +168,7 @@ const Home = (props) => {
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    {sold}
+                    {ethers.utils.formatEther(sold)}
                   </Typography>
                 </WebCard>
               </Stack>
@@ -180,7 +181,7 @@ const Home = (props) => {
                     sx={{ color: "white" }}
                     variant="h2"
                   >
-                    {price / Math.pow(10, 18)} $ERC
+                    {ethers.utils.formatEther(price)} $ERC
                   </Typography>
                   <Container>
                     <div className="buyButton">

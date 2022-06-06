@@ -5,6 +5,7 @@ import { Stack, Button } from "@mui/material";
 import { Container } from "@mui/system";
 import { TextField } from "@mui/material";
 import "./OrganizerPage.css";
+import { ethers } from "ethers";
 
 const OrganizerPage = (props) => {
   const {
@@ -26,7 +27,7 @@ const OrganizerPage = (props) => {
   const [numSold, setNumSold] = useState(0);
 
   const change = (e) => {
-    setPrice(e.target.value);
+    setPrice(ethers.utils.formatUnits(e.target.value, "wei"));
   };
   const pickWinner = async () => {
     setLoading(true);
@@ -59,8 +60,8 @@ const OrganizerPage = (props) => {
     const f = async () => {
       const fee = await ProviderContract.ussage_fee();
       const num = await ProviderContract.num_sold();
-      setUssageFee(Number(fee));
-      setNumSold(Number(num));
+      setUssageFee(fee);
+      setNumSold(num);
     };
     f();
     setLoading(false);
@@ -88,7 +89,7 @@ const OrganizerPage = (props) => {
                   (Number(Address) !== Number(Owner) &&
                     Number(Address) !== Number(ManagerTwo) &&
                     Number(Address) !== Number(ManagerOne)) ||
-                  numSold === 0
+                  ethers.utils.formatEther(numSold) === 0
                 }
               >
                 Pick a winner
@@ -101,7 +102,10 @@ const OrganizerPage = (props) => {
                 variant="contained"
                 sx={{ height: "70px", width: "280px" }}
                 onClick={withDraw}
-                disabled={Number(Address) !== Number(Owner) || ussageFee === 0}
+                disabled={
+                  Number(Address) !== Number(Owner) ||
+                  ethers.utils.formatEther(ussageFee) === 0
+                }
               >
                 Withdraw
               </Button>
