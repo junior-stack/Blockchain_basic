@@ -9,7 +9,7 @@ describe("pick winner", function(){
     // set up: addr1 becomes the buyer and manager of the lottery, we have addr2 to be the manager and an owner
     const Lottery = await ethers.getContractFactory("Lottery");
     const Token = await ethers.getContractFactory("MokToken");
-    [owner, addr1, addr2] = await ethers.getSigners();
+    [owner, addr1, addr2, addr3] = await ethers.getSigners();
     token = await Token.deploy(addr1.address, 500);
     const old = await token.balanceOf(addr1.address);
     old_balance = Number(old);
@@ -20,29 +20,26 @@ describe("pick winner", function(){
   })
 
   it("checks five minutes", async () => {
-    const signer2 = lottery.provider.getSigner(addr1.address);
     try{
-      await lottery.connect(signer2).pickWinner();
+      await lottery.connect(addr1).pickWinner();
       assert(false)
     } catch(err){
       assert(true);
     }
   })
 
-  it("check if the one who picks winner is an owner or manager", async () =>{
+  it("check if the one who picks winner is an owner or manager //should pick a winner", async () =>{
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     try{
-      const signer = lottery.provider.getSigner("0x246280fD39740213D089f6f3A09745cb52aC5eCA")
-      await lottery.connect(signer).pickWinner();
+      await lottery.connect(addr3).pickWinner();
       assert(false)
     } catch(err) {
       assert(err)
     }
    
     try{
-      const signer2 = lottery.provider.getSigner(addr1.address);
-      await lottery.connect(signer2).pickWinner();
+      await lottery.connect(addr1).pickWinner();
       assert(true)
     } catch(err){
       assert(false);
@@ -53,8 +50,7 @@ describe("pick winner", function(){
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     try{
-      const signer2 = lottery.provider.getSigner(addr2.address);
-      await lottery.connect(signer2).pickWinner();
+      await lottery.connect(addr2).pickWinner();
       assert(true)
     } catch(err) {
       assert(false)
@@ -65,8 +61,7 @@ describe("pick winner", function(){
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     try{
-      const signer2 = lottery.provider.getSigner(owner.address);
-      await lottery.connect(signer2).pickWinner();
+      await lottery.connect(owner).pickWinner();
       assert(true)
     } catch(err) {
       assert(false)
