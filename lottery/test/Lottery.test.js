@@ -1,8 +1,8 @@
-const { assert } = require("chai");
+const { assert, expect } = require("chai");
 const { ethers, network } = require("hardhat");
 
-describe("pick winner", function(){
-  let  lottery, owner, addr1, addr2, token;
+describe("pick winner", function () {
+  let lottery, owner, addr1, addr2, token;
   let old_balance;
   this.timeout(10000);
   beforeEach(async () => {
@@ -11,82 +11,83 @@ describe("pick winner", function(){
     const Token = await ethers.getContractFactory("MokToken");
     [owner, addr1, addr2, addr3] = await ethers.getSigners();
     token = await Token.deploy(addr1.address, 500);
-    const old = await token.balanceOf(addr1.address);
-    old_balance = Number(old);
+    old_balance = await token.balanceOf(addr1.address);
     lottery = await Lottery.deploy(addr1.address, addr2.address, token.address);
 
     //addr1 buys the tickets
     await lottery.connect(addr1).buyTicket(25);
-  })
+  });
 
-  it("checks five minutes", async () => {
-    try{
-      await lottery.connect(addr1).pickWinner();
-      assert(false)
-    } catch(err){
-      assert(true);
-    }
-  })
+  it("expects to be an error because 5 minutes has not been passed", async () => {
+    lottery
+      .connect(addr1)
+      .pickWinner()
+      .catch((err) => {
+        expect(err).to.exist();
+      });
+  });
 
-  it("check if the one who picks winner is an owner or manager //should pick a winner", async () =>{
+  it("expects to be an error because a non-manager or non-owner should not be able to pick a winner", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
-    try{
-      await lottery.connect(addr3).pickWinner();
-      assert(false)
-    } catch(err) {
-      assert(err)
-    }
-   
-    try{
-      await lottery.connect(addr1).pickWinner();
-      assert(true)
-    } catch(err){
-      assert(false);
-    }
-  })
 
-  it("checks if the other manager could pick winner", async () => {
+    lottery
+      .connect(addr3)
+      .pickWinner()
+      .catch((err) => {
+        expect(err).to.exist();
+      });
+  });
+
+  it("expect to succeed because the manager should be able to pick a winner", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
-    try{
-      await lottery.connect(addr2).pickWinner();
-      assert(true)
-    } catch(err) {
-      assert(false)
-    }
-  })
+    lottery
+      .connect(addr1)
+      .pickWinner()
+      .then((value) => {
+        expect(value).to.exist();
+      });
+  });
 
-  it("checks if the owner could pick winner", async () => {
+  it("expect to succeed because the other manager could pick winner", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
-    try{
-      await lottery.connect(owner).pickWinner();
-      assert(true)
-    } catch(err) {
-      assert(false)
-    }
-  })
+    lottery
+      .connect(addr1)
+      .pickWinner()
+      .then((value) => {
+        expect(value).to.exist();
+      });
+  });
 
-  it("checks the state is changed correctly: ", async () => {
+  it("expects to succeed because the owner could pick winner", async () => {
+    await network.provider.send("evm_increaseTime", [5 * 60]);
+    await network.provider.send("evm_mine");
+    lottery
+      .connect(owner)
+      .pickWinner()
+      .then((value) => {
+        expect(value).to.exist();
+      });
+  });
+
+  it("expect to ticket number and sold out to be zero ", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     await lottery.pickWinner();
     const ticket_num = await lottery.ticketNumber();
     const num_sold = await lottery.numSold();
-    assert(ticket_num.toString() === '0');
-    assert(num_sold.toString() === '0');
-  })
+    expect(ticket_num.toString()).to.equal("0");
+    expect(num_sold.toString()).to.equal("0");
+  });
 
-  it("checks winner has got right amount", async () => {
+  it("expects the winner to receive right amount of tokens", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     await lottery.pickWinner();
     const winner = await lottery.winner();
     let balance = await token.balanceOf(winner);
-    assert(balance == old_balance * 0.95);
-  })
-
-})
-
-
+    expect(balance.toString()).to.equal((old_balance * 0.95).toString());
+  });
+});
