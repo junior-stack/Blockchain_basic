@@ -2,9 +2,12 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
-contract Lottery is AccessControlEnumerable{
+contract Lottery is AccessControl{
+    using EnumerableSet for EnumerableSet.AddressSet;
+
     bytes32 public constant OWNER = keccak256("owner");
     bytes32 public constant MANAGER = keccak256("managers");
     mapping(uint => address payable) public ticketMapUser;
@@ -15,6 +18,8 @@ contract Lottery is AccessControlEnumerable{
     uint public numSold;
     address public winner;
     IERC20 token;
+    mapping(bytes32 => EnumerableSet.AddressSet) private _roleMembers;
+
     event buy(address sender, uint amount, uint price);
     event pick(address winner, uint ticketNum, uint prize);
     event priceChange(uint old_price, uint new_price);
@@ -25,7 +30,7 @@ contract Lottery is AccessControlEnumerable{
         _setupRole(OWNER, msg.sender);
         _setupRole(MANAGER, manager1);
         _setupRole(MANAGER, manager2);
-        price = 20 * (10 ** 18);
+        price = 20 ether;
         ticketNumber =0;
         winner = address(0);
         endTimeThreshold = block.timestamp + 5 minutes;
@@ -48,6 +53,10 @@ contract Lottery is AccessControlEnumerable{
 
         //emit the event
         emit buy(msg.sender, amount, price);
+    }
+
+    function getRoleMember(bytes32 role, uint256 index) internal view virtual returns (address) {
+        return _roleMembers[role].at(index);
     }
 
 
@@ -118,5 +127,4 @@ contract Lottery is AccessControlEnumerable{
 
 }
 
-// use expect statement from chai, u
 
