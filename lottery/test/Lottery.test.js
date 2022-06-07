@@ -17,13 +17,13 @@ describe("pick winner", function () {
     await lottery.connect(addr1).buyTicket(25);
   });
 
-  it("expects to be an error because 5 minutes has not been passed", async () => {
+  it("should throw be an error because 5 minutes has not been passed", async () => {
     await expect(lottery.connect(addr1).pickWinner()).to.be.revertedWith(
       "You need to draw the lottery 5 min after the game"
     );
   });
 
-  it("expects to be an error because a non-manager or non-owner should not be able to pick a winner", async () => {
+  it("should throw an error because a non-manager or non-owner should not be able to pick a winner", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
 
@@ -32,7 +32,7 @@ describe("pick winner", function () {
     );
   });
 
-  it("expect to succeed because the manager should be able to pick a winner", async () => {
+  it("should succeed because the manager should be able to pick a winner", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     lottery
@@ -43,7 +43,7 @@ describe("pick winner", function () {
       });
   });
 
-  it("expect to succeed because the other manager could pick winner", async () => {
+  it("should succeed because the other manager could pick winner", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     lottery
@@ -54,7 +54,7 @@ describe("pick winner", function () {
       });
   });
 
-  it("expects to succeed because the owner could pick winner", async () => {
+  it("should succeed because the owner could pick winner", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     lottery
@@ -65,7 +65,7 @@ describe("pick winner", function () {
       });
   });
 
-  it("expect to ticket number and sold out to be zero ", async () => {
+  it("should have ticket number and number of sold out tickets set to be zero ", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     await lottery.pickWinner();
@@ -75,7 +75,7 @@ describe("pick winner", function () {
     expect(num_sold.toString()).to.equal("0");
   });
 
-  it("expects the winner to receive right amount of tokens", async () => {
+  it("should have the winner receive right amount of tokens", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     await lottery.pickWinner();
