@@ -1,0 +1,4 @@
+lottery/artifacts/*
+lottery/src/artifacts/*
+lottery/src/cache/*
+lottery/.env
