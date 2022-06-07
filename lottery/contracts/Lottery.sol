@@ -108,7 +108,7 @@ contract Lottery is AccessControl{
         token.transfer(getRoleMember(OWNER, 0), lastUssage);
 
         // emit the withDraw event
-        emit withDraw(usageFee, owner());
+        emit withDraw(usageFee, msg.sender);
     }
 
     modifier checkOwner(){

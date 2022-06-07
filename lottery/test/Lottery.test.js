@@ -1,10 +1,10 @@
-const { assert, expect } = require("chai");
+const { expect } = require("chai");
 const { ethers, network } = require("hardhat");
 
 describe("pick winner", function () {
   let lottery, owner, addr1, addr2, token;
   let old_balance;
-  this.timeout(10000);
+  this.timeout(40000);
   beforeEach(async () => {
     // set up: addr1 becomes the buyer and manager of the lottery, we have addr2 to be the manager and an owner
     const Lottery = await ethers.getContractFactory("Lottery");
@@ -13,30 +13,23 @@ describe("pick winner", function () {
     token = await Token.deploy(addr1.address, 500);
     old_balance = await token.balanceOf(addr1.address);
     lottery = await Lottery.deploy(addr1.address, addr2.address, token.address);
-
     //addr1 buys the tickets
     await lottery.connect(addr1).buyTicket(25);
   });
 
   it("expects to be an error because 5 minutes has not been passed", async () => {
-    lottery
-      .connect(addr1)
-      .pickWinner()
-      .catch((err) => {
-        expect(err).to.exist();
-      });
+    await expect(lottery.connect(addr1).pickWinner()).to.be.revertedWith(
+      "You need to draw the lottery 5 min after the game"
+    );
   });
 
   it("expects to be an error because a non-manager or non-owner should not be able to pick a winner", async () => {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
 
-    lottery
-      .connect(addr3)
-      .pickWinner()
-      .catch((err) => {
-        expect(err).to.exist();
-      });
+    await expect(lottery.connect(addr3).pickWinner()).to.be.revertedWith(
+      "Only the managers could pick a winner"
+    );
   });
 
   it("expect to succeed because the manager should be able to pick a winner", async () => {
@@ -54,7 +47,7 @@ describe("pick winner", function () {
     await network.provider.send("evm_increaseTime", [5 * 60]);
     await network.provider.send("evm_mine");
     lottery
-      .connect(addr1)
+      .connect(addr2)
       .pickWinner()
       .then((value) => {
         expect(value).to.exist();
